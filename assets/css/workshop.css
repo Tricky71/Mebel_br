@@ -1,0 +1,532 @@
+/* ==========================================================================
+   workshop.css — секция 5 .workshop («Собственный цех» + «Двухэтапный
+   контроль», 3 x ui-step + круг CTA №2).
+   Mobile-First: base 390 -> min-width: 768px -> min-width: 1200px.
+   Замеры: docs/specs/workshop.md §2 (work-1920/768/390.html + PNG-кропы
+   390/768; 1920 сверяется только по HTML — PNG-кропа нет).
+   Сетка: base — стопка с отступом 16px от контейнера (экспорт 390: контент
+   x35-36 при контейнере x20); >=768 — grid-ряды; >=1200 — геометрия 1920
+   (фото процесса 640 с выносом -187px, фото результата 910 с выносом -117px
+   — контейнер >=1226 фиксирован 1146, поэтому выносы точные на 1226-1920).
+   Круг CTA — shared ui-cta-circle из portfolio.css (позиция — секционная,
+   как в portfolio: base нахлест половиной, >=768 без нахлеста).
+   ui-eyebrow — из facts.css; на светлом фон затемнен до --color-text-muted-dark
+   (прецедент portfolio §6, контраст 4.74 AA). JS не требуется (CTA — якорь).
+   ========================================================================== */
+
+.workshop {
+  overflow: hidden; /* кроп full-bleed фото/выносов, без горизонтального скролла */
+  background-color: var(--color-bg-light); /* фон принадлежит секции */
+  color: var(--color-text-dark);
+}
+
+/* --- base 390: стопка по левому краю --- */
+.workshop__inner {
+  padding-top: 72px; /* eyebrow на ~106 (экспорт 390), допуск — воздух канвы */
+  padding-bottom: var(--space-section-mobile);
+}
+
+.workshop__prod,
+.workshop__control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  padding-inline: 16px; /* контент x36 при контейнере x20 (экспорт 390) */
+}
+
+/* Eyebrow на #D9D9D9: #918E8E дает 2.30 (провал AA) — #5C5C5C = 4.74.
+   Отклонение от макета, зафиксировано в docs/specs/workshop.md §6. */
+.workshop__eyebrow {
+  color: var(--color-text-muted-dark);
+}
+
+.workshop__title {
+  min-width: 0;
+  margin-top: 16px; /* eyebrow (106) -> H2 (140), зазор ~16-19 */
+  overflow-wrap: break-word;
+  font-size: var(--font-work-h2); /* 39 base -> 70 @768 (поточечно, спека §5) */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  text-transform: uppercase; /* капс через CSS, <br/> не копируем */
+  text-wrap: balance;
+}
+
+/* Стадии: лид + список с красными тире + лид-хвост */
+.workshop__stages {
+  min-width: 0;
+  margin-top: 24px; /* H2 (ends ~233) -> лид (293) из экспорта */
+}
+
+.workshop__lead {
+  min-width: 0;
+  max-width: 32ch; /* переносы как в экспорте (2/3 строки), defensive */
+  overflow-wrap: break-word;
+  font-size: var(--font-work-lead);
+  font-weight: var(--font-weight-light);
+  line-height: var(--lh-body);
+}
+
+.workshop__lead:empty {
+  display: none; /* defensive: пустой лид не оставляет дыры */
+}
+
+.workshop__stage-list {
+  margin-top: 20px; /* лид (ends ~343) -> стадии (364) из экспорта */
+}
+
+.workshop__stage-item {
+  position: relative; /* якорь тире-::before */
+  min-width: 0;
+  padding-left: 37px; /* тире 23 + зазор 14 (экспорт) */
+  overflow-wrap: break-word;
+  font-size: var(--font-work-lead);
+  font-weight: var(--font-weight-light);
+  line-height: var(--lh-body);
+}
+
+/* Ритм тире: шаг 30 (строка ~25 + зазор 5) */
+.workshop__stage-item + .workshop__stage-item {
+  margin-top: 5px;
+}
+
+/* Тире — decorative ::before (в a11y-дереве только тексты li) */
+.workshop__stage-item::before {
+  content: "";
+  position: absolute;
+  top: 15px; /* экспорт 390: 379-364, 1920: 545-530 — тире на 15 ниже верха строки */
+  left: 0;
+  width: var(--work-dash);
+  height: 2px;
+  background-color: var(--color-accent);
+}
+
+.workshop__stages .workshop__lead:last-child {
+  margin-top: 36px; /* список (ends ~479) -> хвост (515) из экспорта */
+}
+
+.workshop__media {
+  min-width: 0;
+}
+
+.workshop__media img {
+  display: block;
+  width: 100%;
+  height: auto; /* перебивает height-атрибут (presentational hint сильнее UA auto) */
+  object-fit: cover;
+}
+
+/* Процесс 318x308 (экспорт 390); материалов на 390 НЕТ */
+.workshop__media--process {
+  margin-top: 32px; /* хвост (ends ~592) -> фото (624) из экспорта */
+}
+
+.workshop__media--materials {
+  display: none;
+}
+
+/* Результат: H3 40 + лид + фото 316x181 */
+.workshop__result {
+  min-width: 0;
+  margin-top: 48px; /* фото (ends 932) -> H3 (991) из экспорта */
+}
+
+.workshop__result-title {
+  min-width: 0;
+  overflow-wrap: break-word;
+  font-size: var(--font-result);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  text-transform: uppercase; /* капс через CSS */
+}
+
+.workshop__result-lead {
+  min-width: 0;
+  max-width: 30ch;
+  margin-top: 10px; /* H3 (ends ~1039) -> лид (1049) из экспорта */
+  overflow-wrap: break-word;
+  font-size: var(--font-work-lead);
+  font-weight: var(--font-weight-light);
+  line-height: var(--lh-body);
+}
+
+.workshop__result-lead:empty {
+  display: none;
+}
+
+.workshop__media--result {
+  margin-top: 32px; /* лид (ends ~1155) -> фото (1187) из экспорта */
+}
+
+.workshop__media--result img {
+  aspect-ratio: 316 / 181; /* кроп панорамы под геометрию экспорта */
+}
+
+/* Круг <768: малый 131, нахлестом половиной на угол фото справа
+   (прецедент — CTA portfolio <768, workshop.md §5). */
+.workshop__cta {
+  justify-self: end;
+  width: var(--work-circle-sm);
+  height: var(--work-circle-sm);
+  margin-top: calc(var(--work-circle-sm) / -2);
+  margin-right: 7px; /* круг 214-345 при фото 36-352 (экспорт 390) */
+}
+
+/* --- Контроль: стопка --- */
+.workshop__control {
+  margin-top: 64px; /* круг (ends ~1439) -> eyebrow2 (1497) из экспорта */
+}
+
+.workshop__control-title {
+  min-width: 0;
+  margin-top: 16px; /* eyebrow2 (1497) -> H2-2 (1530) из экспорта */
+  overflow-wrap: break-word;
+  font-size: var(--font-work-check); /* 46 -> 48 -> 70 (поточечно, §5) */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.workshop__media--control {
+  margin-top: 32px; /* H2-2 (ends ~1806) -> фото (1839) из экспорта */
+}
+
+.workshop__media--control img {
+  aspect-ratio: 320 / 134; /* кроп панорамы под геометрию экспорта */
+}
+
+.workshop__check-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 72px; /* шаги стопкой (экспорт: 01-text ends ~2277 -> 02-num 2362) */
+  min-width: 0;
+  margin-top: 40px; /* фото (ends ~1973) -> 01-num (2011) из экспорта */
+  list-style: none; /* номера — .ui-step__num, нативные маркеры выключены (наследуется li) */
+}
+
+/* Локальные стили ui-step (в utilities.css выносятся с приходом
+   offer/measurer вместе с ui-cta-circle — workshop.md §10). */
+.workshop__check-item {
+  min-width: 0;
+}
+
+/* Номера decorative: порядок несет ol, сами aria-hidden (прецедент trust).
+   display: block — иначе li-линия (lh-body) раздувает бокс номера и ломает
+   ритм num -> stage 29 (экспорт: 1993 -> 2022). */
+.ui-step__num {
+  display: block;
+  font-size: var(--font-step-num);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  color: var(--color-accent);
+}
+
+.ui-step__title {
+  min-width: 0;
+  margin-top: 10px; /* num (16px, ~19 tall) -> stage: ритм топов 29 (§5) */
+  overflow-wrap: break-word;
+  font-size: var(--font-stage);
+  font-weight: var(--font-weight-medium);
+  line-height: 1; /* экспорт: кегль 26 / строка 26 */
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.ui-step__sub {
+  min-width: 0;
+  overflow-wrap: break-word;
+  font-size: var(--font-step-name);
+  font-weight: var(--font-weight-light);
+  line-height: 1.3; /* экспорт: кегль 20 / строка 26 */
+}
+
+.ui-step__text {
+  min-width: 0;
+  margin-top: 29px; /* name (26 tall) -> text: ритм топов 55 (§5) */
+  overflow-wrap: break-word;
+  font-size: var(--font-step-text);
+  font-weight: var(--font-weight-light);
+  line-height: 1.73; /* экспорт: кегль 15 / строка 26 */
+}
+
+/* --- >=768: ряды; процесс скрыт, материалы 328x327 --- */
+@media (min-width: 768px) {
+  :root {
+    --font-work-h2: 4.375rem; /* 70: флюид достигает макса уже к 768 (§5) */
+    --font-work-check: 3rem; /* H2-2: 48 */
+  }
+
+  .workshop__prod,
+  .workshop__control {
+    padding-inline: 35px; /* контент x75-77 при контейнере x40 (экспорт 768) */
+  }
+
+  .workshop__prod {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 328px);
+    column-gap: 32px;
+    align-items: start;
+  }
+
+  .workshop__prod > .workshop__eyebrow,
+  .workshop__prod > .workshop__title {
+    grid-column: 1 / -1;
+  }
+
+  /* Ряд «стадии | материалы»: воздух H2 -> лид из экспорта (308 -> 409) */
+  .workshop__stages {
+    grid-column: 1;
+    grid-row: 3;
+    margin-top: 100px;
+  }
+
+  .workshop__media--process {
+    display: none; /* процесса-фото на 768 НЕТ (подтверждено work-768.png) */
+  }
+
+  .workshop__media--materials {
+    display: block;
+    grid-column: 2;
+    grid-row: 3;
+    margin-top: 54px; /* фото (363) выше лида (409) — экспорт */
+  }
+
+  .workshop__media--materials img {
+    aspect-ratio: 328 / 327;
+  }
+
+  /* Ряд «(H3+лид) | фото bleed-right 673x381» */
+  .workshop__result {
+    grid-column: 1;
+    margin-top: 72px;
+  }
+
+  .workshop__result-lead {
+    max-width: 250px; /* ширина лида из экспорта 768 */
+  }
+
+  .workshop__media--result {
+    grid-column: 2;
+    margin-top: 72px;
+    /* Вылет вправо до края вьюпорта: колонка кончается на 75 левее края
+       (контейнер 40 + паддинг 35) — константа на всем 768-1199 */
+    margin-right: -75px;
+  }
+
+  .workshop__media--result img {
+    aspect-ratio: auto;
+    height: 381px; /* видимая высота из экспорта (ширина — колонка + bleed) */
+  }
+
+  /* Круг 152: подтянут вверх на фото-ряд (перекрывает вертикаль фото
+     в текстовой колонке, горизонтального нахлеста на фото нет) */
+  .workshop__cta {
+    grid-column: 1;
+    justify-self: start;
+    width: var(--cta-circle);
+    height: var(--cta-circle);
+    margin-top: -186px;
+    margin-right: 0;
+    margin-left: 48px; /* круг x124 при тексте x75 (экспорт 768) */
+  }
+
+  /* Контроль: фото bleed-left | (eyebrow2 + H2-2) */
+  .workshop__control {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 32px;
+    align-items: start;
+    margin-top: 96px;
+  }
+
+  .workshop__media--control {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    margin-top: 0;
+    /* Вылет влево до края вьюпорта: сетка начинается на 75 правее края —
+       константа на всем 768-1199 */
+    margin-left: -75px;
+  }
+
+  .workshop__media--control img {
+    aspect-ratio: auto;
+    height: 317px; /* видимая высота из экспорта 768 */
+  }
+
+  .workshop__control > .workshop__eyebrow {
+    grid-column: 2;
+  }
+
+  .workshop__control-title {
+    grid-column: 2;
+    font-size: 2.5rem; /* H2-2 40px на 768-1199 (немонотонность 46->40->70) */
+  }
+
+  /* Шаги: 01|02 две колонки + 03 ниже узкой (w~228-320, экспорт) */
+  .workshop__check-list {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 40px;
+    margin-top: 64px;
+  }
+
+  .workshop__check-item:last-child {
+    grid-column: 1;
+    max-width: 320px;
+  }
+}
+
+/* --- >=1200: геометрия 1920 --- */
+@media (min-width: 1200px) {
+  :root {
+    --font-work-check: 4.375rem; /* H2-2: 70 */
+  }
+
+  .workshop__inner {
+    padding-top: 117px; /* eyebrow на 117 (экспорт 1920) */
+    padding-bottom: 146px; /* 01-текст (ends ~2233) -> канва 2379 */
+  }
+
+  .workshop__prod,
+  .workshop__control {
+    padding-inline: 0; /* координаты снапятся к контейнеру (x380 ~= 387) */
+  }
+
+  /*   Production: фикс. треки 453 + 259 + 328 + gaps 57 = 1154 — контент
+     повторяет экспорт вместе с его 8-пиксельным выступом за контейнер
+     вправо (stages 897, materials 1213-1541 при контейнере 387-1533).
+     Гибкий трек здесь нельзя: minmax схлопывается под 1146 и уводит
+     materials на 1205. Фото процесса 640 выступает влево на 187
+     (экспорт: 200 при контейнере 387) — точное на вьюпортах >=1226. */
+  .workshop__prod {
+    grid-template-columns: 453px 259px 328px;
+    column-gap: 57px; /* фото (ends 840) -> тексты (897); тексты -> материалы (1213) */
+  }
+
+  .workshop__media--process {
+    display: block;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    justify-self: start; /* фикс. ширина 640 — без stretch-произвола */
+    width: 640px;
+    max-width: none;
+    margin-top: 4px; /* фото (121) на 4 ниже eyebrow (117) — экспорт */
+    margin-left: -187px;
+  }
+
+  .workshop__media--process img {
+    height: 620px; /* 640x620 из экспорта */
+  }
+
+  .workshop__prod > .workshop__eyebrow {
+    grid-column: 2 / span 2;
+    grid-row: 1;
+  }
+
+  .workshop__prod > .workshop__title {
+    grid-column: 2 / span 2;
+    grid-row: 2;
+  }
+
+  /* Воздух H2 -> лид из экспорта (ends ~318 -> 459) */
+  .workshop__stages {
+    grid-column: 2;
+    grid-row: 3;
+    margin-top: 141px;
+  }
+
+  .workshop__stage-list {
+    margin-top: 22px; /* лид (ends ~508) -> стадии (530) из экспорта */
+  }
+
+  .workshop__media--materials {
+    grid-column: 3;
+    grid-row: 3;
+    margin-top: 95px; /* материалы (413) выше лида (459) — экспорт */
+  }
+
+  .workshop__media--materials img {
+    height: 327px; /* 328x327 из экспорта */
+  }
+
+  /* Ряд «(H3+лид+круг) | фото 910x450»: фото якорится к правому краю
+     контейнера с выносом 117 (экспорт: 740-1650 при контейнере 387-1533).
+     Ряды явные: широкий figure span 3 авто-плейсментом ушел бы ниже текста. */
+  .workshop__result {
+    grid-column: 1;
+    grid-row: 4;
+    margin-top: 105px; /* стадии (ends ~755) -> H3 (860): ряд тянет stages, не фото */
+    margin-left: -7px; /* H3/лид x380 при контейнере 387 — экспорт */
+  }
+
+  .workshop__result-lead {
+    max-width: 266px; /* ширина лида из экспорта 1920 */
+  }
+
+  .workshop__media--result {
+    grid-column: 1 / span 3;
+    grid-row: 4;
+    justify-self: end;
+    width: 910px;
+    max-width: none;
+    margin-top: 105px;
+    /* Край треков — 1154 (сетка шире контейнера на 8): 1154 + 109 = 1263,
+       фото 353-1263 в контейнере = 740-1650 абс. (экспорт) */
+    margin-right: -109px;
+  }
+
+  .workshop__media--result img {
+    height: 450px; /* 910x450 из экспорта */
+  }
+
+  /* Круг в том же ряду, что H3/фото: визуально под лидом (ends ~1017),
+     горизонтального пересечения с фото нет.
+     Сдвиг от верха ряда: 1088 - 755 = 333 (ряд тянет stages до 755). */
+  .workshop__cta {
+    grid-column: 1;
+    grid-row: 4;
+    align-self: start;
+    margin-top: 333px;
+    margin-left: 50px; /* круг x437 при контейнере 387 (экспорт 1920) */
+  }
+
+  /* Контроль: фото 600x440 | (eyebrow2 + H2-2 70).
+     Фото x380 (вынос -7), тексты x1056: зазор фото -> тексты 76. */
+  .workshop__control {
+    grid-template-columns: 600px minmax(0, 1fr);
+    column-gap: 69px; /* 387 + 600 + 69 = 1056 (экспорт) */
+    margin-top: 120px; /* фото результата (ends 1310) -> eyebrow2 (1430) */
+  }
+
+  .workshop__media--control {
+    width: 600px;
+    margin-top: 3px; /* фото (1433) на 3 ниже eyebrow2 (1430) — экспорт */
+    margin-left: -7px; /* фото 380-980 — экспорт */
+  }
+
+  .workshop__media--control img {
+    height: 440px; /* 600x440 из экспорта */
+  }
+
+  .workshop__control-title {
+    grid-column: 2;
+    font-size: var(--font-work-check); /* H2-2 70px на 1200+ */
+    /* 5 строк как в экспорте: fallback-шрифт шире Inter, «УСТАНОВКОЙ» не
+       влезает в 477 колонки — даем ширину с вылетом в 69-пиксельный зазор
+       (соседей справа нет, перенос строк совпадает с макетом) */
+    width: 520px;
+    max-width: none;
+  }
+
+  /* Шаги — x-ритм экспорта 380/857/1242: треки 368/276 + зазоры 109.
+     Список начинается на 7 левее контейнера (как фото контроля). */
+  .workshop__check-list {
+    grid-template-columns: 368px 276px minmax(0, 1fr);
+    column-gap: 109px;
+    margin-top: 110px; /* H2-2 (ends ~1883) -> номера (1993) из экспорта */
+    margin-left: -7px;
+  }
+
+  .workshop__check-item:last-child {
+    grid-column: auto;
+    max-width: none;
+  }
+}

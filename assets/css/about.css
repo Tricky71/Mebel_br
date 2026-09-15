@@ -1,0 +1,231 @@
+/* ==========================================================================
+   about.css — секция 8 .about («мебельное производство», 3 x ui-advantage).
+   Mobile-First: base 390 -> min-width: 768px -> min-width: 1024px.
+   Замеры: docs/specs/about.md §2 (about-1920/768/390.html + PNG,
+   1920.png зона 10742-11951). Только flex (Grid запрещен спекой).
+   <1024 — стопка (интро + ряды); >=1024 — head в ряд и body в ряд
+   (интро 700 + список). Иконки — инлайн-SVG в HTML (img нет).
+   Разделители — li::after 840px с bleed вправо (секция overflow hidden).
+   JS не требуется (одна текстовая ссылка).
+   ========================================================================== */
+
+.about {
+  overflow: hidden; /* bleed разделителей 840px режется справа */
+  background-color: var(--color-bg-light); /* фон принадлежит секции */
+  color: var(--color-text-dark);
+}
+
+/* --- base 390: стопка --- */
+.about__inner {
+  padding-top: var(--space-about-top-a); /* 169 -> 319 */
+  padding-bottom: var(--space-about-bottom-a); /* 78 -> 108 */
+}
+
+/* Eyebrow на #D9D9D9: #918E8E дает 2.30 (провал AA) — #5C5C5C = 4.74.
+   Отклонение от макета, зафиксировано в docs/specs/about.md §7. */
+.about__eyebrow {
+  color: var(--color-text-muted-dark);
+}
+
+.about__title {
+  min-width: 0;
+  margin-top: 28px; /* eyebrow (ends ~186) -> H2 (214/364), зазор из экспорта */
+  overflow-wrap: break-word;
+  font-size: var(--font-about-h2-a); /* 36 -> 50 */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  color: var(--color-text-dark);
+  text-transform: uppercase; /* капс через CSS, <br/> не копируем */
+  letter-spacing: -0.005em; /* PP: advances Fontsource шире макетных (урок reviews) */
+  /* text-wrap: balance ЗАПРЕЩЕН: переносы макета ручные (урок reviews) */
+}
+
+.about__lead {
+  min-width: 0;
+  max-width: 407px; /* ширина лида 768/1920 (390: бокс 350 — переносы свои, см. спеку §9) */
+  margin-top: var(--space-about-h2lead-a); /* 38 -> 68 */
+  overflow-wrap: break-word;
+  font-size: var(--font-about-text); /* 16 -> 17 */
+  font-weight: var(--font-weight-light);
+  line-height: 26px; /* экспорт: строки лида/текстов идут с шагом 26 */
+  letter-spacing: -0.005em; /* PP: та же дельта advances */
+  color: var(--color-text-dark);
+}
+
+.about__lead:empty {
+  display: none; /* defensive: пустой лид не оставляет дыры */
+}
+
+/* Ссылка — plain text из макета (стрелок нет): без hover-декорации,
+   только :focus-visible из base.css. href уточнить (сейчас #). */
+.about__more {
+  display: inline-block;
+  margin-top: var(--space-about-link); /* 84 фикс */
+  font-size: var(--font-about-link);
+  font-weight: var(--font-weight-regular);
+  line-height: 26px;
+  color: var(--color-text-dark);
+  text-decoration: none;
+}
+
+.about__list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-top: var(--space-about-list-a); /* ссылка -> ряды: 79 -> 89 */
+}
+
+/* Ряд: иконка + тело. Шаг 179 = контент 113 + пад 25 + линия 1 + зазор 40. */
+.about__item {
+  position: relative; /* якорь ::after-разделителя */
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+  padding-bottom: 25px; /* контент (ends +113) -> зона линии (+138) */
+  padding-left: var(--space-about-row-inset); /* 15 -> 34 */
+  margin-bottom: 41px; /* линия (+139) -> следующий ряд (+179) */
+}
+
+.about__item:last-child {
+  margin-bottom: 0; /* после последнего разделителя — только пад секции */
+}
+
+/* Разделитель — абсолютный ::after 840px (bleed вправо, режется секцией):
+   линия 1px стартует ровно на +138 (контент 113 + пад 25), поэтому bottom:-1px.
+   Стоит ПОД каждым рядом, включая последний (1088/1411/1181).
+   Шаг ряда 179 = 113 + 25 + 1 + 40 (margin 41: линия 1px снаружи паддинга). */
+.about__item::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 840px;
+  max-width: none; /* шире контейнера осознанно */
+  border-top: 1px solid var(--color-text-dark);
+}
+
+.ui-advantage__icon {
+  flex: 0 0 var(--space-about-icon-cell); /* фикс. ячейка 122 -> 180; иконка прижата влево */
+  min-width: 0;
+}
+
+.ui-advantage__icon svg {
+  display: block;
+}
+
+.ui-advantage__body {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Бейдж decorative: порядок несет ol, сам aria-hidden (контраст белого 10px
+   на #E53824 не нормируется — прецедент trust.md §8, зафиксировано в спеке). */
+.ui-advantage__num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  border-radius: var(--radius-circle);
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+  font-size: var(--font-about-num);
+  font-weight: var(--font-weight-light);
+  line-height: 1;
+}
+
+.ui-advantage__text {
+  min-width: 0;
+  margin-top: 16px; /* бейдж (ends +19) -> текст (+35), зазор из экспорта */
+  overflow-wrap: break-word;
+  font-size: var(--font-about-text); /* 16 -> 17 */
+  font-weight: var(--font-weight-light);
+  line-height: 26px;
+  letter-spacing: -0.005em;
+  color: var(--color-text-dark);
+}
+
+.ui-advantage__text:empty {
+  display: none; /* defensive */
+}
+
+/* Ширина текстовых колонок из экспорта (01 уже: 209). */
+.about__item:nth-child(1) .ui-advantage__text {
+  max-width: 209px;
+}
+
+.about__item:nth-child(2) .ui-advantage__text,
+.about__item:nth-child(3) .ui-advantage__text {
+  max-width: 227px;
+}
+
+/* --- >=768: та же стопка; -a токены уперлись в капы = значения 768,
+   переключаемся на -b (мины совпадают — стык непрерывен), layout не меняется. --- */
+@media (min-width: 768px) {
+  .about__inner {
+    padding-top: var(--space-about-top-b); /* 319 -> 364 */
+    padding-bottom: var(--space-about-bottom-b); /* 108 -> 121 */
+  }
+
+  .about__title {
+    font-size: var(--font-about-h2-b); /* 50 -> 65 */
+  }
+
+  .about__lead {
+    margin-top: var(--space-about-h2lead-b); /* 68 -> 92 */
+  }
+}
+
+/* --- >=1024: десктоп — head в ряд, body в ряд (интро 700 + список) --- */
+@media (min-width: 1024px) {
+  /* Компенсация глобального контейнера 1146 против 1160 в макете
+     (прецедент reviews): весь inner на -7px — eyebrow 380, H2 535,
+     лид 539, ряды/разделители с 1080. Контейнер не трогаем.
+     ВАЖНО: только relative+left — margin-left на центрированном .ui-container
+     с фиксированной шириной ломает центрирование (якорение к краю). */
+  .about__inner {
+    position: relative;
+    left: -7px;
+  }
+
+  .about__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 75px; /* 535 - 380 - 80 */
+  }
+
+  .about__eyebrow {
+    flex: none;
+    width: 80px;
+    padding-top: 15px; /* eyebrow (379) ниже H2 (364) на 15 */
+  }
+
+  .about__title {
+    flex: 1;
+    min-width: 0;
+    margin-top: 0;
+  }
+
+  .about__body {
+    display: flex;
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  /* Интро 700 (380..1080): лид с отступом 159 (539..946) + ссылка. */
+  .about__intro {
+    flex: 0 0 700px;
+    min-width: 0;
+    padding-left: 159px;
+  }
+
+  .about__list {
+    flex: 1;
+    min-width: 0;
+    margin-top: 72px; /* ряды с 592 (H2 ends 520 + 72); связи со ссылкой в колонке нет */
+  }
+
+  .about__item {
+    padding-left: 0; /* край списка = 1080 */
+  }
+}

@@ -1,0 +1,62 @@
+/* ==========================================================================
+   footer.css — секция 11 .footer (нижняя полоса: копирайт + политика).
+   Mobile-First: base 390 -> min-width: 1024px (единственный брейкпоинт;
+   типографика константна 13/30, переключается только раскладка).
+   Замеры: docs/specs/footer.md §2 (footer-1920/390.html).
+   Base: стопка по центру (gap 3px, верх 37 / низ 42, высота контентная ~142).
+   >=1024: ряд space-between (копирайт слева, политика справа у краев
+   контейнера), min-height 103 + центрирование. DOM-порядок везде:
+   копирайт -> политика. JS не требуется (спека §6).
+   ========================================================================== */
+
+.footer {
+  background-color: var(--color-bg-dark); /* полоса grey-14 */
+  color: var(--color-surface);
+}
+
+/* --- base 390: столбец, центр --- */
+.footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-footer-gap); /* 3px между строками */
+  min-width: 0;
+  padding-top: var(--space-footer-pad-top);
+  padding-bottom: var(--space-footer-pad-bottom);
+  text-align: center;
+}
+
+.footer__copy,
+.footer__policy {
+  min-width: 0; /* defensive: не распирают flex */
+  overflow-wrap: break-word;
+  font-size: var(--font-footer); /* 13px, все ширины */
+  font-weight: var(--font-weight-regular);
+  line-height: var(--lh-footer); /* 30px */
+  color: var(--color-surface);
+}
+
+.footer__copy {
+  margin: 0;
+}
+
+.footer__policy {
+  text-decoration: none; /* в макете plain-текст, без подчеркивания */
+}
+
+.footer__policy:empty {
+  display: none; /* defensive: пустая ссылка схлопывается */
+}
+
+/* --- >=1024px: ряд space-between, полоса 103 --- */
+@media (min-width: 1024px) {
+  .footer__inner {
+    flex-direction: row;
+    justify-content: space-between; /* 380 слева / правый край контейнера */
+    align-items: center;
+    min-height: 103px; /* фикс зоны через min-height, не height */
+    padding-top: var(--space-footer-pad-desktop);
+    padding-bottom: var(--space-footer-pad-desktop);
+    text-align: left;
+  }
+}

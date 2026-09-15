@@ -1,0 +1,343 @@
+/* ==========================================================================
+   measurer.css — секция 9 .measurer («Закажите бесплатный выезд замерщика»,
+   ui-lead-form №3: имя + телефон + submit + ghost + note).
+   Mobile-First: base 390 -> min-width: 768px -> min-width: 1200px
+   (по аналогии с communication).
+   Замеры: docs/specs/measurer.md §2 (meas-1920/768/390.html + PNG-кропы
+   meas-768/meas-390 + кроп 1920.png 11960..12860).
+   DOM = визуальному порядку везде (тексты -> панель): base/768 панель ниже
+   текстов; >=1200 панель справа full-height (inset 153 от края контейнера —
+   зеркало communication --comm-offset).
+   Форма — shared ui-lead-form (база в communication.css): состав инстанса
+   дословно как №1, здесь только позиционные переопределения
+   (специфичность 0,2,0+ перебивает базу 0,1,0).
+   768: панель — grid, форма — display: contents (дети — ячейки сетки);
+   a11y-дерево формы сохраняется, семантика не рвется (только раскладка).
+   JS (маска/валидация) — forms.js, общий с communication (data-lead-form).
+   ========================================================================== */
+
+.measurer {
+  position: relative;
+  overflow: hidden; /* кроп фото, без горизонтального скролла */
+  min-height: var(--measurer-photo-h); /* 1320 base -> 900 @768; контент короче, низ — пустота */
+  background-color: var(--color-bg-dark); /* подложка grey-14 + полоса ниже фото */
+  color: var(--color-text-light);
+}
+
+/* --- base 390: тексты по центру, компактная карточка 300 --- */
+.measurer__bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--measurer-photo-h);
+}
+
+.measurer__bg img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 35% 50%; /* фокус тёмной стены из кропов 768/390 (35.2–35.4%), см. спеку §9 */
+}
+
+/* Затемнение фото: техника hero (темнее сверху, к низу сходит на нет).
+   Альфа — ориентир, точная сверка оверлеем 0.5 при PP (measurer.md §9). */
+.measurer__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--color-overlay-top),
+    var(--color-overlay) 45%,
+    transparent 80%
+  );
+}
+
+.measurer__inner {
+  position: relative;
+}
+
+.measurer__intro {
+  margin-top: 120px; /* H2-старт 120 во всех ширинах (экспорт) */
+  text-align: center;
+}
+
+.measurer__title {
+  min-width: 0;
+  max-width: 311px; /* 4 строки, как в экспорте 390 */
+  margin-inline: auto;
+  overflow-wrap: break-word;
+  font-size: var(--font-meas); /* 43 base -> 57 @768 -> 59 @1200 */
+  font-weight: var(--font-weight-bold);
+  line-height: var(--lh-tight);
+  text-transform: uppercase; /* капс через CSS, <br/> не копируем */
+}
+
+.measurer__lead {
+  min-width: 0;
+  max-width: 320px; /* 5 строк, как в экспорте 390 */
+  margin-top: 49px; /* H2 (ends ~326) -> лид (375); производное, PP (спека §9) */
+  margin-inline: auto;
+  overflow-wrap: break-word;
+  font-size: var(--font-meas-lead); /* 16 base -> 18 @768 -> 19 @1200 */
+  font-weight: var(--font-weight-medium);
+  line-height: 1.375; /* 22/16 */
+}
+
+.measurer__lead:empty {
+  display: none; /* defensive: пустой лид не оставляет дыры */
+}
+
+/* Красная карточка: ширина 300, высота контентная, дети по центру */
+.measurer__panel {
+  width: min(var(--measurer-panel), 100%);
+  margin-top: 84px; /* лид (ends ~485) -> панель (569) из экспорта */
+  margin-inline: auto;
+  padding: 36px 31px 92px; /* низ ~92: note (ends ~1142) -> 1234; производное, PP */
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.measurer__logo {
+  display: block;
+  line-height: 0;
+}
+
+.measurer__logo svg {
+  display: block;
+  width: 237px; /* как export/comms-панель */
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
+.measurer__panel-lead {
+  min-width: 0;
+  margin-top: 58px; /* лого (ends ~637) -> лид (695) из экспорта */
+  overflow-wrap: break-word;
+  font-size: var(--font-meas-formlead); /* 17/400, все ширины */
+  font-weight: var(--font-weight-regular);
+  line-height: 1.53; /* 26/17 */
+  text-align: center;
+  text-wrap: pretty;
+}
+
+/* --- Инстанс №3 ui-lead-form: позиционное (база — communication.css) --- */
+.measurer .ui-lead-form {
+  margin-top: 54px; /* лид (ends ~773) -> форма (827); перебивает comm-90px */
+}
+
+/* Ghost-зазор 20 (в comm — 16): экспорт 666->686, 1017->1037.
+   Плюс shared-баг comm-стилей: ghost наследует ui-btn 39px/13px, а во всех
+   экспортах (comm + measurer, все ширины) кнопка 50px/14px. Чинится здесь,
+   в скоупе секции (глобальный фикс communication.css — отдельным шагом,
+   там та же дельта против comm.md §2). */
+.measurer .ui-lead-form__alt {
+  min-height: 50px;
+  margin-top: 20px;
+  font-size: var(--font-btn-desktop); /* 14px, как в экспортах */
+}
+
+/* Note: зазор 25 на base (экспорт: 1087->1112); lh 1.32 = 2 строки по 14.5
+   (экспорт ~29px высотой — только так сходятся высоты панелей 665/402/900
+   во всех ширинах; дескрипторы fallback-шрифта влезают, клипа нет). */
+.measurer .ui-lead-form__note {
+  width: 248px; /* коробка дословно из экспорта (71..319); текст центрирован */
+  margin-top: 25px;
+  margin-inline: -5px; /* вылет за 238-контент симметрично; секция клипит края */
+  line-height: 1.32;
+}
+
+/* --- >=768: тексты слева, широкая панель 616 с 2-колоночной сеткой --- */
+@media (min-width: 768px) {
+  :root {
+    --font-meas: 3.5625rem; /* H2: 57 */
+    --font-meas-lead: 1.125rem; /* лид: 18 */
+    --measurer-photo-h: 900px; /* фотозона и min-height секции */
+  }
+
+  .measurer__intro {
+    margin-left: 34px; /* тексты x74 при контейнере x40 (экспорт 768) */
+    text-align: left;
+  }
+
+  .measurer__title {
+    max-width: 633px; /* 3 строки, как в экспорте 768 */
+    margin-inline: 0;
+  }
+
+  .measurer__lead {
+    max-width: 618px; /* 3 строки, как в экспорте 768 */
+    margin-top: 40px; /* H2 (ends ~325) -> лид (365); производное, PP */
+    margin-inline: 0;
+    line-height: 1.39; /* 25/18 */
+  }
+
+  /* Панель 616 по центру; внутри — строгая сетка с треками-зазорами:
+     r1: logo | lead; r2-r4: form | ghost (ghost прижат к низу submit);
+     r5: note. Зазоры — треками (маргины детей рвут арифметику сетки). */
+  .measurer__panel {
+    display: grid;
+    grid-template-columns: 238px minmax(0, 1fr);
+    grid-template-rows: auto 37px minmax(50px, auto) 20px minmax(50px, auto) 20px minmax(50px, auto) auto;
+    column-gap: 68px; /* form (ends 346) -> ghost (414) из экспорта */
+    width: min(var(--measurer-panel-wide), 100%);
+    margin-top: 39px; /* лид (ends ~440) -> панель (479) из экспорта */
+    padding: 36px 31px 12px; /* низ ~12: note (ends ~869) -> 881; производное, PP */
+  }
+
+  .measurer__logo {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* Лид колонки 2: коробка 472 при колонке с 414 — экспортное смещение,
+     воспроизвести дословно (текст внутри по центру, спека §9) */
+  .measurer__panel-lead {
+    grid-column: 2;
+    grid-row: 1;
+    width: 232px;
+    margin-top: 0;
+    margin-left: 58px;
+  }
+
+  /* Форма растворяется в сетке панели (только раскладка, семантика цела) */
+  .measurer .ui-lead-form {
+    display: contents;
+  }
+
+  .measurer .ui-lead-form__field {
+    grid-column: 1;
+    min-width: 0;
+    margin-bottom: 0; /* зазоры — треками сетки, не маргинами */
+  }
+
+  .measurer .ui-lead-form__field:not(.ui-lead-form__field--phone) {
+    grid-row: 3;
+  }
+
+  .measurer .ui-lead-form__field--phone {
+    grid-row: 5;
+  }
+
+  .measurer .ui-lead-form__submit {
+    grid-column: 1;
+    grid-row: 7;
+  }
+
+  .measurer .ui-lead-form__alt {
+    grid-column: 2;
+    grid-row: 3 / 8; /* от верха формы до низа submit */
+    align-self: end; /* низ ghost = низу submit (820), как в экспорте */
+    justify-self: start;
+    width: 238px;
+    margin-top: 0;
+  }
+
+  /* Note на всю ширину; коробка левее колонки на 4, чтобы ЦЕНТР ТЕКСТА
+     совпал с экспортом (104 vs 108; текст центрирован, спека §9).
+     margin-top сброшен к comm-20 (base-override 25 сюда не применим:
+     note-верх = конец ряда + 20 = 840). */
+  .measurer .ui-lead-form__note {
+    grid-column: 1 / -1;
+    grid-row: 8;
+    max-width: 248px;
+    margin-top: 20px;
+    margin-left: -4px;
+  }
+}
+
+/* --- >=1200: grid тексты + full-height панель 300 справа --- */
+@media (min-width: 1200px) {
+  :root {
+    --font-meas: 3.6875rem; /* H2: 59 */
+    --font-meas-lead: 1.1875rem; /* лид: 19 */
+  }
+
+  /* Зеркало communication: правый inset 153 (1533 - 1380 из экспорта) */
+  .measurer__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    padding-right: 153px;
+  }
+
+  .measurer__intro {
+    grid-column: 1;
+    margin-left: -7px; /* H2/лид x380 при контейнере 387 — прецедент workshop */
+    text-align: left;
+  }
+
+  .measurer__title {
+    max-width: 656px; /* 3 строки, как в экспорте 1920 */
+  }
+
+  .measurer__lead {
+    max-width: 615px; /* 3 строки, как в экспорте 1920 */
+    margin-top: 33px; /* H2 (ends ~332) -> лид (365); производное, PP */
+    line-height: 1.37; /* 26/19 */
+  }
+
+  /* Панель — колонка 2, высота контентная 900 (паддинги в сумме дают
+     full-height секции; отдельного stretch не нужно) */
+  .measurer__panel {
+    display: flex;
+    flex-direction: column;
+    grid-column: 2;
+    width: 300px;
+    margin-top: 0;
+    padding: 38px 31px 114px; /* низ 114: note (ends ~786) -> 900 */
+  }
+
+  .measurer__panel-lead {
+    width: auto;
+    margin-top: 285px; /* лого (ends ~70) -> лид (355); поточечно! */
+    margin-left: 0;
+    text-align: left;
+  }
+
+  /* Форма снова обычным боксом (сброс display: contents 768) */
+  .measurer .ui-lead-form {
+    display: flex;
+    margin-top: 43px; /* лид (ends ~433) -> форма (476) из экспорта */
+  }
+
+  .measurer .ui-lead-form__field {
+    grid-column: auto;
+    margin-bottom: var(--comm-field-gap);
+  }
+
+  .measurer .ui-lead-form__field:not(.ui-lead-form__field--phone) {
+    grid-row: auto;
+  }
+
+  .measurer .ui-lead-form__field--phone {
+    grid-row: auto;
+  }
+
+  .measurer .ui-lead-form__submit {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .measurer .ui-lead-form__alt {
+    grid-column: auto;
+    grid-row: auto;
+    align-self: auto;
+    justify-self: auto;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .measurer .ui-lead-form__note {
+    grid-column: auto;
+    grid-row: auto;
+    /* Коробка дословно из экспорта (1106..1354, w248): контент уже (238),
+       текст центрирован — позиция текста не меняется, совпадает бокс */
+    width: 248px;
+    max-width: none;
+    margin-top: 20px;
+    margin-inline: -5px;
+  }
+}

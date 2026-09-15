@@ -1,0 +1,352 @@
+/* ==========================================================================
+   portfolio.css — секция 2 .portfolio (мозаика 6 работ + круг CTA).
+   Mobile-First: base 390 -> min-width: 768px -> min-width: 1200px.
+   Замеры: docs/specs/portfolio.md §2 (portfolio-1920/1440/768/390.html + PNG).
+   Сетка: ряды-обертки со своими fr-треками (точные пропорции экспорта,
+   fluid без брейкпоинта 1440); <768 обертки display:contents, порядок ячеек —
+   через order (круг после фото 2, note между фото 5 и 6, как в 390-экспорте).
+   Подписи: <768 горизонтальные под фото; >=768 вертикальные
+   (writing-mode, не rotate с паддингами — layout.md §10.3).
+   JS не требуется (CTA — якорная ссылка).
+   ========================================================================== */
+
+.portfolio {
+  background-color: var(--color-bg-light); /* фон принадлежит секции */
+}
+
+/* --- base 390: одна колонка --- */
+.portfolio__inner {
+  padding-top: 90px; /* eyebrow на 90 (экспорт 390) */
+  padding-bottom: var(--space-section-mobile);
+}
+
+/* Eyebrow на светлом: #918E8E дает 2.30 (провал AA) — затемнен до #5C5C5C
+   (4.74, AA). Отклонение от макета, зафиксировано в docs/specs/portfolio.md §8. */
+.portfolio__eyebrow {
+  color: var(--color-text-muted-dark);
+}
+
+.portfolio__mosaic {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-mosaic-gap-sm);
+}
+
+/* Обертки рядов <768 прозрачны: ячейки раскладываются напрямую с order.
+   Порядок: h2(1) фото1(2) лид(3) фото2(4) круг(5) фото3(6) фото4(7)
+   фото5(8) note(9) фото6(10) — как в 390-экспорте. */
+.portfolio__row,
+.portfolio__side {
+  display: contents;
+}
+
+.portfolio__title {
+  order: 1;
+  margin-top: 16px; /* eyebrow (90) -> H2 (123), зазор 16 */
+  margin-bottom: 50px; /* H2 (3 строки, ends ~307) -> фото1 (380) */
+  max-width: 350px; /* переносы МЕБЕЛЬ/ПО/ВАШЕМУ/ПРОЕКТУ, как в экспорте
+    («МЕБЕЛЬ ПО» ~411px не влезает; ПРОЕКТУ ~343px целым) */
+  font-size: var(--font-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  color: var(--color-text-dark);
+  text-transform: uppercase; /* капс через CSS */
+  text-wrap: balance;
+}
+
+.portfolio__lead {
+  order: 3;
+  margin-top: 16px; /* фото1 -> лид (экспорт 390: 685 -> 701) */
+  max-width: 24ch;
+  font-size: 1rem; /* 16 фикс на всех ширинах (экспорт) */
+  font-weight: var(--font-weight-light);
+  line-height: var(--lh-body);
+  color: var(--color-text-dark);
+  text-wrap: pretty; /* ровный правый край без висячих союзов */
+}
+
+.portfolio-card {
+  position: relative; /* якорь вертикальных подписей >=768 */
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* подпись — фото: один зазор для всех карточек */
+  min-width: 0;
+  margin: 0; /* сброс figure-margin */
+}
+
+.portfolio-card--p1 { order: 2; aspect-ratio: 600 / 520; }
+.portfolio-card--p2 { order: 4; aspect-ratio: 300 / 400; }
+.portfolio-card--p3 { order: 6; aspect-ratio: 760 / 400; }
+.portfolio-card--p4 { order: 7; aspect-ratio: 860 / 520; }
+.portfolio-card--p5 { order: 8; aspect-ratio: 760 / 400; }
+.portfolio-card--p6 { order: 10; aspect-ratio: 300 / 400; }
+
+/* img вне потока только >=768; <768 — в потоке под подписью.
+   Подпись <768: НАД фото (order), выравнивание по карточке:
+   p1/p3/p5 слева, p2/p4/p6 справа. */
+.portfolio-card img {
+  position: static;
+  width: 100%;
+  height: auto;
+  aspect-ratio: inherit; /* пропорция карточки (600/520 и т.д.) */
+  object-fit: cover;
+}
+
+/* Подпись <768: горизонтальная НАД фото (вертикаль 390-экспорта наполовину
+   за вьюпортом — артефакт, см. portfolio.md §10). */
+.portfolio-card__caption {
+  order: -1;
+  margin-top: 0;
+  font-size: var(--font-caption);
+  font-weight: var(--font-weight-light);
+  line-height: var(--lh-body);
+  color: var(--color-text-dark);
+}
+
+.portfolio-card--p1 .portfolio-card__caption,
+.portfolio-card--p3 .portfolio-card__caption,
+.portfolio-card--p5 .portfolio-card__caption {
+  text-align: left;
+}
+
+.portfolio-card--p2 .portfolio-card__caption,
+.portfolio-card--p4 .portfolio-card__caption,
+.portfolio-card--p6 .portfolio-card__caption {
+  text-align: right;
+}
+
+.portfolio__note {
+  order: 9;
+  max-width: 24ch;
+  font-size: 1rem;
+  font-weight: var(--font-weight-light);
+  line-height: var(--lh-body);
+  color: var(--color-text-dark);
+  text-wrap: balance; /* 3 строки в 201px, как геометрия экспорта */
+}
+
+/* --- Круг CTA (shared-блок ui-cta-circle, позиция — секционная).
+   Временное место — portfolio.css (переедет в utilities.css вместе с ui-eyebrow,
+   второй потребитель — workshop). --- */
+.ui-cta-circle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--cta-circle);
+  height: var(--cta-circle);
+  padding: 16px;
+  border-radius: var(--radius-circle); /* экспортный 3000px нормализован */
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+  font-size: var(--font-cta-circle);
+  font-weight: var(--font-weight-medium);
+  line-height: 20px;
+  text-align: center;
+  text-decoration: none;
+  text-wrap: balance;
+  transition: background-color var(--transition-base), transform var(--transition-base);
+}
+
+.ui-cta-circle:hover {
+  background-color: var(--color-accent-hover);
+  transform: scale(1.2); /* +20% плавно */
+}
+
+.ui-cta-circle:focus-visible {
+  outline: 2px solid var(--color-text-dark);
+  outline-offset: 4px;
+}
+
+/* Круг <768: в потоке после фото 2, нахлест половиной на стык
+   (устойчивый вариант позиции 390-экспорта, см. portfolio.md §5). */
+.portfolio__cta {
+  order: 5;
+  justify-self: end;
+  margin-top: calc(var(--cta-circle) / -2);
+}
+
+/* --- >=768: мозаика десктопной композиции (треки — точные fr-пропорции
+   экспорта; кроп краев через cover + overflow hidden, без выноса за экран) --- */
+@media (min-width: 768px) {
+  .portfolio__inner {
+    padding-block: 120px;
+  }
+
+  .portfolio {
+    overflow: hidden; /* кроп мозаики по краям, без горизонтального скролла */
+  }
+
+  .portfolio__mosaic {
+    row-gap: var(--space-mosaic-gap);
+  }
+
+  .portfolio__row {
+    display: grid;
+    min-width: 0;
+  }
+
+  /* Сброс мобильного порядка: ряды идут по DOM */
+  .portfolio__title,
+  .portfolio__lead,
+  .portfolio-card,
+  .portfolio__cta,
+  .portfolio__note {
+    order: initial;
+  }
+
+  .portfolio__title {
+    margin-bottom: 0;
+  }
+
+  .portfolio__row--r1 {
+    grid-template-columns: minmax(0, 560fr) minmax(0, 600fr);
+  }
+
+  .portfolio__row--r1 .portfolio__title {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .portfolio__row--r1 .portfolio__lead {
+    grid-column: 1;
+    grid-row: 2;
+    margin-top: 32px;
+  }
+
+  .portfolio__row--r1 .portfolio-card--p1 {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .portfolio__row--r2 {
+    grid-template-columns: minmax(0, 300fr) minmax(0, 100fr) minmax(0, 760fr);
+  }
+
+  .portfolio__row--r2 .portfolio-card--p2 {
+    grid-column: 1;
+  }
+
+  .portfolio__row--r2 .portfolio-card--p3 {
+    grid-column: 3;
+  }
+
+  .portfolio__row--r3 {
+    grid-template-columns: minmax(0, 860fr) minmax(0, 300fr);
+    gap: 20px;
+  }
+
+  .portfolio__side {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 32px;
+    min-width: 0;
+  }
+
+  .portfolio__cta {
+    margin-top: 0;
+  }
+
+  .portfolio__row--r4 {
+    grid-template-columns: minmax(0, 760fr) minmax(0, 100fr) minmax(0, 300fr);
+  }
+
+  .portfolio__row--r4 .portfolio-card--p5 {
+    grid-column: 1;
+  }
+
+  .portfolio__row--r4 .portfolio-card--p6 {
+    grid-column: 3;
+  }
+
+  .portfolio-card {
+    display: block; /* сброс base-flex: подпись и фото абсолютны */
+  }
+
+  .portfolio-card img {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+
+  /* Подписи >=768: все СНАРУЖИ figure, вынос единый 5px для всех карточек.
+     bottom-to-top, как rotate(-90deg) в макете. */
+  .portfolio-card__caption {
+    position: absolute;
+    margin-top: 0;
+    white-space: nowrap;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: var(--ls-caption);
+  }
+
+  /* p1 «шкафы»: слева от фото, в текстовой зоне */
+  .portfolio-card--p1 .portfolio-card__caption {
+    top: 0;
+    right: calc(100% + 5px);
+  }
+
+  /* p2 «комоды»: справа от фото (в gap), внизу */
+  .portfolio-card--p2 .portfolio-card__caption {
+    bottom: 12px;
+    left: calc(100% + 5px);
+  }
+
+  /* p3 «ванная»: слева от фото (в gap), вверху */
+  .portfolio-card--p3 .portfolio-card__caption {
+    top: 0;
+    right: calc(100% + 5px);
+  }
+
+  /* p4 «КУХНИ»: справа от фото, вверху */
+  .portfolio-card--p4 .portfolio-card__caption {
+    top: 0;
+    left: calc(100% + 5px);
+  }
+
+  /* p5 «детские»: справа от фото (в gap), вверху */
+  .portfolio-card--p5 .portfolio-card__caption {
+    top: 0;
+    left: calc(100% + 5px);
+  }
+
+  /* p6 «мебель в офис»: слева от фото (в gap), внизу */
+  .portfolio-card--p6 .portfolio-card__caption {
+    bottom: 12px;
+    right: calc(100% + 5px);
+  }
+}
+
+/* --- >=1200: те же треки в контейнере 1160; круг и note по экспорту --- */
+@media (min-width: 1200px) {
+  /* Специфичность 0,2,0 — иначе проигрывает правилу >=768 (тот же селектор) */
+  .portfolio__row--r1 .portfolio__lead {
+    margin-top: 125px; /* H2 (ends 489) -> лид (614) из экспорта */
+    max-width: 270px;
+    line-height: 1.2;
+  }
+
+  /* Фото 1 ниже верха ряда на 33 (экспорт: ряд 137, фото 170) */
+  .portfolio__row--r1 .portfolio-card--p1 {
+    margin-top: 33px;
+  }
+
+  .portfolio__side {
+    align-content: start;
+    justify-items: end;
+    gap: 0; /* ритм задают margin circle/note (экспорт: 118/174) */
+  }
+
+  .portfolio__cta {
+    margin-top: 118px; /* круг (1348) от верха ряда 3 (1230) */
+    margin-right: 24px; /* правый край 1516 при контейнере до 1540 */
+  }
+
+  .portfolio__note {
+    margin-top: 174px; /* note (1674) под кругом (ends 1500) */
+    max-width: 235px; /* 3 строки: в 201px реальный Inter дает 4 (геометрия
+      экспорта недостижима); правый край совпадает с макетом (1540) */
+  }
+}

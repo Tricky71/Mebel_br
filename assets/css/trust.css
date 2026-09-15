@@ -1,0 +1,222 @@
+/* ==========================================================================
+   trust.css — секция 3 .trust («клиенты нам доверяют», 3 чередующихся ряда).
+   Mobile-First: base 390 -> min-width: 768px -> min-width: 1200px.
+   Замеры: docs/specs/trust.md §2 (trust-1920/768/390.html + PNG).
+   Ряды: <1200 стопка (фото -> тело); >=1200 flex-ряды фото+тело,
+   --reverse — зеркало через flex-direction (DOM один: медиа -> тело).
+   Разделители — border li (контейнерная ширина, см. trust.md §10).
+   JS не требуется.
+   ========================================================================== */
+
+.trust {
+  overflow: hidden; /* страховка full-bleed линий (100vw против скроллбара) */
+  background-color: var(--color-bg-dark-2); /* фон принадлежит секции */
+}
+
+/* --- base 390: стопка --- */
+.trust__inner {
+  padding-top: 120px; /* eyebrow на 120 (экспорт 390/768/1920 единодушен) */
+  padding-bottom: var(--space-section-mobile);
+}
+
+/* Eyebrow на #363636: #918E8E дает 3.72 (провал AA) — #A3A1A1 = 4.70.
+   Отклонение зафиксировано в docs/specs/trust.md §8. */
+.trust__eyebrow {
+  margin-left: 15px; /* шапка от края (экспорт 390: x35 при контейнере x20) */
+  color: var(--color-text-muted-trust);
+}
+
+.trust__title {
+  margin-top: 16px; /* eyebrow (120) -> H2 (153), зазор 16 */
+  margin-left: 15px; /* см. выше */
+  font-size: var(--font-h2); /* 51 -> 70 (390: факт 53, допуск 2px) */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  color: var(--color-text-light);
+  text-transform: uppercase; /* капс через CSS */
+  text-wrap: balance;
+}
+
+.trust__list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 40px; /* H2 -> первый ряд (экспорт 390: 344 -> 384) */
+  list-style: none; /* маркеры ol не нужны: номера — .ui-trust-row__num */
+}
+
+/* Разделители — border, без div (контейнерная ширина, см. trust.md §10).
+   Контент с отступом: десктоп +41 (экспорт: фото 421 при контейнере 380),
+   мобайл +25 (экспорт 390: фото x45 при контейнере x20).
+   Маркеры: list-style: none на списке (наследуется li) — ::marker-правило не нужно. */
+.trust__item {
+  min-width: 0;
+  padding-block: var(--space-trust-row);
+  padding-left: 25px;
+}
+
+/* Средние разделители — border li (контейнерная ширина).
+   Верхний (под H2) и нижний (под последним li) — full-bleed через
+   ::before/::after списка (как линии 280/1424 в экспорте).
+   Вертикали (>=1200, как в макете): боковые стены — border списка,
+   средняя — фон-градиент 1px по центру на всю высоту. */
+.trust__item + .trust__item {
+  border-top: 1px solid var(--color-line);
+}
+
+.trust__list::before,
+.trust__list::after {
+  content: "";
+  display: none; /* <768 полноэкранные разделители скрыты */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  border-top: 1px solid var(--color-line);
+}
+
+.ui-trust-row__media {
+  width: 100%;
+  max-width: 600px; /* <1200 фото до 600 */
+  margin: 0; /* сброс figure-margin; слева (экспорт: x45) */
+  aspect-ratio: 5 / 3; /* 500x300 во всех ширинах (экспорт) */
+}
+
+.ui-trust-row__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ui-trust-row__body {
+  min-width: 0;
+  margin-top: 24px; /* фото -> номер (экспорт 390: 623 -> 650) */
+}
+
+.ui-trust-row__head {
+  display: flex;
+  align-items: flex-start; /* номер ниже верха H3 на 6 (экспорт, все ширины) */
+  gap: var(--space-trust-num);
+  min-width: 0;
+}
+
+/* Номера decorative: порядок несет ol, сами aria-hidden (контраст 2.83
+   к decorative не применяется, брендовый красный сохранен — trust.md §8) */
+.ui-trust-row__num {
+  flex: none;
+  margin-top: 6px; /* см. выше */
+  font-size: var(--font-trust-num);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  color: var(--color-accent);
+}
+
+.ui-trust-row__title {
+  min-width: 0;
+  overflow-wrap: break-word;
+  font-size: var(--font-h3); /* 24 -> 37 */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  color: var(--color-text-light);
+  text-transform: uppercase; /* капс через CSS */
+  text-wrap: balance;
+}
+
+.ui-trust-row__text {
+  min-width: 0;
+  margin-top: 16px; /* H3 -> текст (экспорт 390: 702 -> 719) */
+  overflow-wrap: break-word;
+  font-size: var(--font-trust-text); /* 16 -> 17 */
+  font-weight: var(--font-weight-light);
+  line-height: var(--lh-body);
+  color: var(--color-text-light);
+}
+
+/* --- >=768: та же стопка, крупнее типографика и ритм.
+   Фото и тело — колонкой 500 по центру (экспорт: x134 при контейнере x40). --- */
+@media (min-width: 768px) {
+  .trust__eyebrow,
+  .trust__title {
+    margin-left: 32px; /* шапка от края (экспорт: H2 x70, eyebrow x74) */
+  }
+
+  .trust__list {
+    margin-top: 140px; /* H2 (ends ~295) -> фото (482): воздух из экспорта */
+  }
+
+  .trust__list::before,
+  .trust__list::after {
+    display: block; /* >=768 полноэкранные разделители видны */
+  }
+
+  .trust__item {
+    padding-left: 0;
+  }
+
+  .ui-trust-row__media {
+    max-width: 600px; /* <1200 фото до 600 */
+    margin-inline: auto;
+  }
+
+  .ui-trust-row__body {
+    max-width: 500px;
+    margin-top: 44px; /* фото (ends 782) -> номер (827) из экспорта */
+    margin-inline: auto;
+  }
+
+  .ui-trust-row__text {
+    margin-top: 32px;
+  }
+}
+
+/* --- >=1200: чередующиеся flex-ряды (фото 500 + тело), контент по центру --- */
+@media (min-width: 1200px) {
+  .trust__eyebrow,
+  .trust__title {
+    margin-left: 0; /* шапка по краю контейнера (экспорт: 379/380) */
+  }
+
+  .trust__inner {
+    padding-bottom: 120px; /* низ 121 (экспорт: 1545 - 1424) */
+  }
+
+  .trust__list {
+    margin-top: 43px; /* H2 (ends 237) -> разделитель (280) из экспорта */
+    border-left: 1px solid var(--color-line); /* боковые стены как в макете */
+    border-right: 1px solid var(--color-line);
+    background-image: linear-gradient(var(--color-line), var(--color-line)); /* средняя вертикаль */
+    background-size: 1px 100%;
+    background-position: center top;
+    background-repeat: no-repeat;
+  }
+
+  .trust__item {
+    display: flex;
+    align-items: flex-start; /* контент от верха (+41), низ добирает пустота (экспорт) */
+    gap: var(--space-trust-gap);
+    min-height: 382px; /* шаг разделителей 280/662/1044/1424 из экспорта */
+    padding-top: 41px; /* фото/H3 от разделителя (экспорт: +40/42) */
+    padding-bottom: 0;
+    padding-left: 41px; /* фото от края (экспорт: 421 при 380) */
+  }
+
+  /* Зеркальный ряд: отступы с обеих сторон (экспорт: num 421, фото ends 1502) */
+  .ui-trust-row--reverse {
+    flex-direction: row-reverse;
+    padding-right: 41px;
+  }
+
+  .ui-trust-row__media {
+    flex: 0 0 500px;
+    max-width: none;
+    margin: 0;
+  }
+
+  .ui-trust-row__body {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+  }
+
+  .ui-trust-row__text {
+    margin-top: 40px; /* H3 -> текст (экспорт: 411 -> 452); ряд 3 см. отчет PP */
+  }
+}

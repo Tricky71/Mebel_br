@@ -1,0 +1,140 @@
+/* ==========================================================================
+   contacts.css — секция 10 .contacts (тёмная карточка + Яндекс.Карта).
+   Mobile-First: base 390 -> min-width: 1024px (единственный брейкпоинт;
+   промежуток 390-1024 интерполируется fluid-токенами, экспорта 768 нет).
+   Замеры: docs/specs/contacts.md §2 (contacts-1920/390.html + contacts-390.png
+   + зона 1920.png ~12855-13455).
+   Base: стопка (карточка в потоке без бокса, затем карта full-bleed).
+   >=1024: Grid-стэкинг (карта и оверлей в grid-area 1/1, прецедент layout.md §9):
+   тёмный бокс 460 поверх карты слева. DOM-порядок везде: карточка -> карта.
+   Карта: плейсхолдер (webp + srcset) + ленивый iframe (map.js — отдельный шаг
+   по спеке §6; без него виден статичный плейсхолдер, запросов к Яндексу ноль).
+   ========================================================================== */
+
+.contacts {
+  background-color: var(--color-bg-dark); /* рамка секции grey-14 */
+  color: var(--color-text-light);
+}
+
+/* --- base 390: столбец (карточка -> карта) --- */
+.contacts__inner {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Карточка base — бокса нет (фон секции); паддинги 45 верх/низ,
+   бока — поля overlay-контейнера (20px). */
+.contacts__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-contact-gap); /* title -> body 29px (константа) */
+  min-width: 0;
+  padding-top: var(--space-contact-pad-block);
+  padding-bottom: var(--space-contact-pad-block);
+}
+
+.ui-contact-card__title {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: break-word;
+  font-family: var(--font-sans);
+  font-size: var(--font-contact-title); /* 21.8 base -> 25.5 */
+  font-weight: 600;
+  line-height: var(--lh-contact-title);
+  color: var(--color-surface);
+  text-transform: uppercase; /* капс через CSS, <br/> нет */
+}
+
+.ui-contact-card__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-style: normal; /* сброс браузерного italic у address */
+  font-family: var(--font-text); /* Manrope (+ фолбэк до woff2, см. спеку §9) */
+  font-size: var(--font-contact-text); /* 14 base -> 18 */
+  font-weight: 300;
+  line-height: var(--lh-contact-text);
+  color: var(--color-surface);
+}
+
+.ui-contact-card__phone,
+.ui-contact-card__email {
+  display: block;
+  min-width: 0;
+  text-decoration: none; /* в макете plain-текст, без подчеркиваний */
+}
+
+.ui-contact-card__email {
+  overflow-wrap: anywhere; /* длинные адреса не распирают 460/350 */
+}
+
+.ui-contact-card__address,
+.ui-contact-card__hours {
+  min-width: 0;
+  margin: 0; /* единый ритм lh, без групповых зазоров (как <br/> в экспорте) */
+  overflow-wrap: break-word;
+}
+
+.ui-contact-card__address:empty,
+.ui-contact-card__hours:empty {
+  display: none; /* defensive: пустые p схлопываются */
+}
+
+/* Карта base: в потоке под карточкой, full-bleed, высота fluid 390->600 */
+.contacts__map {
+  position: relative;
+  min-width: 0;
+  height: var(--space-contact-map);
+  background-color: var(--color-map); /* подложка #E5E3DF */
+}
+
+.ui-map__placeholder {
+  height: 100%;
+  margin: 0;
+}
+
+.ui-map__placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ui-map__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* --- >=1024px: наложение (карта 600 + бокс 460 поверх слева) --- */
+@media (min-width: 1024px) {
+  .contacts__inner {
+    display: grid;
+  }
+
+  /* Оба слоя в одной ячейке; оверлей выше карты, но клики сквозь него
+     (кроме самой карточки) уходят в карту: иначе правая половина карты
+     была бы некликабельна под прозрачным оверлеем. */
+  .contacts__map,
+  .contacts__overlay {
+    grid-area: 1 / 1;
+  }
+
+  .contacts__overlay {
+    position: relative;
+    z-index: var(--z-map-card); /* карточка выше iframe */
+    pointer-events: none;
+  }
+
+  /* Тёмный бокс: у левого края контейнера (+120 сверху, низ контентный) */
+  .contacts__card {
+    max-width: 460px;
+    min-height: 300px;
+    margin-top: var(--space-contact-top);
+    padding: var(--space-contact-pad-box); /* 60 со всех сторон */
+    background-color: var(--color-bg-dark);
+    pointer-events: auto;
+  }
+}

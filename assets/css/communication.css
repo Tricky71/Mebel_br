@@ -1,0 +1,323 @@
+/* ==========================================================================
+   communication.css — секция 4 .communication («Постоянная коммуникация»,
+   ui-lead-form №1: лого + имя + телефон + submit + WhatsApp + дисклеймер).
+   Mobile-First: base 390 -> min-width: 768px -> min-width: 1200px.
+   Замеры: docs/specs/communication.md §2 (comm-1920/768/390.html + кроп 1920.png).
+   Фон: половинки коллажа comm-bg-l/r.jpg, стык всегда на правом краю панели.
+   Высота контентная (>=768 предел ~900 без фикса). Маска/валидация — forms.js.
+   ========================================================================== */
+
+.communication {
+  position: relative;
+  overflow: hidden;
+  max-width: 1920px; /* кап как в hero: дальше фон не разъезжается */
+  margin: 0 auto;
+  background-color: var(--color-bg-dark-2); /* подложка вместо фото (ассет pending) */
+}
+
+/* TODO(asset): comm-*.webp + srcset (768/1200/1920) —
+   см. docs/specs/communication.md §10. Разметка .communication__bg готова.
+   Временно: половинки коллажа comm-bg-l/r.jpg (шов x=736).
+   Стык половинок всегда точно на правом краю панели через --comm-split.
+   Оверлей — как в hero (::after с --color-overlay*). */
+.communication__bg {
+  position: absolute;
+  inset: 0;
+}
+
+.communication__bg-left,
+.communication__bg-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.communication__bg-left {
+  left: 0;
+  width: var(--comm-split, 50%);
+}
+
+.communication__bg-right {
+  left: var(--comm-split, 50%);
+  right: 0;
+}
+
+.communication__bg-left img,
+.communication__bg-right img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Шов держать со стороны панели, кроп — с внешнего края */
+.communication__bg-left img {
+  object-position: right center;
+}
+
+.communication__bg-right img {
+  object-position: left center;
+}
+
+/* Затемнение фото как в hero: темнее сверху (под заголовок), к низу сходит на нет */
+.communication__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--color-overlay-top),
+    var(--color-overlay) 45%,
+    transparent 80%
+  );
+}
+
+/* --- Base 390: тексты по центру, компактная карточка --- */
+.communication__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--space-section-mobile);
+  padding-bottom: var(--space-section-mobile);
+}
+
+.communication__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.communication__title {
+  font-size: var(--font-comm);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--lh-tight);
+  color: var(--color-text-light);
+  text-transform: uppercase; /* капс через CSS, в коде обычный регистр */
+  text-wrap: balance;
+}
+
+.communication__subtitle {
+  margin-top: 12px;
+  font-size: var(--font-commsub); /* 26: немонотонность 26->24->44, см. спеку §5 */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  color: var(--color-text-light);
+  text-transform: uppercase;
+}
+
+.communication__lead {
+  margin-top: 20px;
+  max-width: 30ch;
+  font-size: var(--font-commlead); /* 18 */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-body);
+  color: var(--color-text-light);
+}
+
+.communication__lead:empty {
+  display: none; /* defensive: пустой лид не оставляет дыры */
+}
+
+/* Красная карточка: ширина 300, высота авто, паддинги 38/31/~40 */
+.communication__panel {
+  display: flex;
+  flex-direction: column;
+  width: min(var(--comm-panel), 100%);
+  margin-top: 32px; /* лид ~300 -> карточка 329 из экспорта */
+  padding: 38px 31px 40px;
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.communication__logo {
+  line-height: 0;
+}
+
+.communication__logo svg {
+  width: 100%;
+  max-width: 238px;
+  height: auto;
+}
+
+/* Форма №1 (локально; в utilities выносится с приходом offer/measurer) */
+.ui-lead-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 90px; /* лого -> поля (экспорт 390: 489-367-32) */
+  min-width: 0;
+}
+
+.ui-lead-form__field {
+  display: flex;
+  align-items: center;
+  min-height: 50px;
+  margin-bottom: var(--comm-field-gap);
+  border-bottom: 1px solid var(--color-surface);
+}
+
+.ui-lead-form__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-surface);
+  font: inherit;
+  font-size: var(--font-field);
+  font-weight: var(--font-weight-regular);
+  line-height: 1;
+}
+
+.ui-lead-form__input::placeholder {
+  color: rgb(255 255 255 / 50%); /* плейсхолдер 50% (экспорт), значение — 100% */
+  opacity: 1;
+}
+
+.ui-lead-form__input:focus {
+  outline: none; /* фокус — через :focus-visible ниже, без сдвига border */
+}
+
+.ui-lead-form__prefix {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+  margin-right: 10px;
+  font-size: var(--font-field);
+  font-weight: var(--font-weight-regular);
+  line-height: 1;
+  color: var(--color-surface);
+}
+
+.ui-lead-form__flag {
+  display: block;
+  width: 18px; /* RU-триколор 18x13 из экспорта */
+  height: 13px;
+}
+
+.ui-lead-form__field--phone .ui-lead-form__input {
+  font-size: var(--font-mask); /* маска 14.1px */
+}
+
+.ui-lead-form__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 50px; /* 238x50 из экспорта */
+  padding: 8px 15px; /* боковые 15 из экспорта */
+  border: none;
+  border-radius: var(--radius-none);
+  background-color: var(--color-surface);
+  color: #0e0e0e; /* черный текст на белой кнопке (экспорт) */
+  font-size: var(--font-btn-desktop);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--lh-tight);
+  text-align: center;
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+}
+
+.ui-lead-form__submit:hover {
+  background-color: var(--color-text-light);
+}
+
+.ui-lead-form__alt {
+  width: 100%;
+  min-width: 0; /* перебивает ui-btn 177px: карточка уже 238 */
+  margin-top: 16px; /* submit -> ghost (экспорт: 686-670) */
+}
+
+.ui-lead-form__note {
+  margin-top: 20px; /* ghost -> note (экспорт: 756-736) */
+  text-align: center;
+  font-size: var(--font-note);
+  font-weight: var(--font-weight-light);
+  line-height: var(--lh-body);
+  color: var(--color-text-light);
+}
+
+.ui-lead-form__note a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* --- >=768: панель 300 full-height слева, тексты слева --- */
+@media (min-width: 768px) {
+  .communication {
+    /* Правый край панели: контейнер 40 + 300. Стык фона — точно на нем. */
+    --comm-split: 340px;
+  }
+
+  .communication__inner {
+    display: grid;
+    grid-template-columns: var(--comm-panel) minmax(0, 1fr);
+    column-gap: 20px; /* панель 74-374 -> тексты 394 из экспорта */
+    align-items: stretch;
+    min-height: min(100svh, 900px); /* предел 900 из экспорта без фикса */
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .communication__intro {
+    align-items: flex-start;
+    order: 2; /* DOM: тексты первые (SR), визуально панель слева */
+    padding-top: 120px; /* H1-старт (экспорт) */
+    padding-bottom: 60px;
+    text-align: left;
+  }
+
+  .communication__title {
+    font-size: 2rem; /* 32 фикс: и 390, и 768 (отклонение от fluid, см. спеку §5) */
+  }
+
+  .communication__subtitle {
+    font-size: 1.5rem; /* 24 (экспорт 768) */
+  }
+
+  .communication__lead {
+    font-size: 1rem; /* 16 (экспорт 768) */
+  }
+
+  .communication__panel {
+    order: 1;
+    width: auto; /* трек 300 */
+    margin-top: 0;
+    padding-bottom: 110px; /* форма 480-790, под ней пустота (экспорт) */
+  }
+
+  .ui-lead-form {
+    margin-top: auto; /* низ формы на 790 из экспорта */
+  }
+}
+
+/* --- >=1200: панель x540 (контейнер +160), тексты x929 (зазор 89) --- */
+@media (min-width: 1200px) {
+  .communication {
+    /* Правый край панели: (100% - контейнер)/2 + 153 + 300. Стык фона — точно на нем. */
+    --comm-split: calc((100% - min(calc(100% - 80px), 1146px)) / 2 + 453px);
+  }
+
+  .communication__inner {
+    padding-left: var(--comm-offset); /* 540-380 из экспорта */
+    column-gap: var(--comm-gap); /* 929-840 из экспорта */
+  }
+
+  .communication__title {
+    font-size: var(--font-comm); /* fluid -> 64 */
+  }
+
+  .communication__subtitle {
+    font-size: var(--font-commsub-desktop); /* 44 */
+    white-space: nowrap; /* 1 строка на десктопе */
+  }
+
+  .communication__lead {
+    margin-top: 37px; /* 337 -> 374 из экспорта */
+    max-width: 406px; /* 2 строки как в макете (экспорт w406) */
+    font-size: var(--font-commlead-desktop); /* 20 */
+  }
+}

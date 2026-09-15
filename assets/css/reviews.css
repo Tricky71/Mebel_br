@@ -1,0 +1,340 @@
+/* ==========================================================================
+   reviews.css — секция 6 .reviews («мы специально не пишем их на сайте»,
+   3 x ui-review-badge: Flamp / Yell / 2 Gis).
+   Mobile-First: base 390 -> min-width: 768px -> min-width: 1024px
+   (контракт docs/specs/reviews.md §1; отклонение от 1200 в structure.md).
+   Только flex (Grid запрещен спекой). SVG — инлайн в HTML (img нет).
+   Замеры: docs/specs/reviews.md §2 (reviews-1920/768/390.html + PNG).
+   Разделители — CSS (бордеры/::before), отдельных div в DOM нет.
+   JS не требуется (карточки — внешние ссылки).
+   ========================================================================== */
+
+.reviews {
+  background-color: var(--color-bg-dark); /* фон принадлежит секции */
+  color: var(--color-text-light);
+}
+
+/* --- base 390: столбец --- */
+.reviews__inner {
+  padding-top: var(--space-section-mobile);
+  padding-bottom: var(--space-section-mobile);
+}
+
+.reviews__eyebrow {
+  color: var(--color-text-muted); /* #918E8E на #232323 = 4.84 (AA) */
+}
+
+.reviews__title {
+  min-width: 0;
+  margin-top: 13px; /* eyebrow (ends ~107) -> H2 (120), зазор из экспорта */
+  overflow-wrap: break-word;
+  font-size: var(--font-reviews-title); /* 42 base -> 55 @768 -> 65 @1024 */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-tight);
+  text-transform: uppercase; /* капс через CSS, <br/> не копируем */
+  letter-spacing: -0.005em; /* PP: Fontsource-Inter шире макетного (~1.3%);
+    трекинг сводит концы строк к ±2px (overlay 1920) */
+  /* text-wrap: balance ЗАПРЕЩЕН: в макете ручные <br/> (неуравновешенные
+     строки 971/450); balance уводил «ПИШЕМ» на 3-ю строку (overlay 1920) */
+}
+
+.reviews__lead {
+  min-width: 0;
+  max-width: 65ch;
+  margin-top: 36px; /* H2 -> лид: 36 (390/768), 12 (@1024, см. ниже) */
+  overflow-wrap: break-word;
+  font-size: var(--font-review-lead); /* 17px, все ширины */
+  font-weight: var(--font-weight-light);
+  line-height: 1.53; /* экспорт 390: 26/17 */
+  letter-spacing: -0.005em; /* PP: та же дельта advances (584 вместо 574) */
+  color: var(--color-text-light);
+}
+
+.reviews__lead:empty {
+  display: none; /* defensive: пустой лид не оставляет дыры */
+}
+
+.reviews__list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  margin-top: clamp(58px, 34px + 6.1vw, 81px); /* лид -> карточки: 58 (390,
+    лид 4 строки ends 462 -> 520) -> 81 (768, ends 340 -> 421) */
+}
+
+.reviews__item {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 340px; /* карточка 280 + воздух; defensive от распирания */
+  min-width: 0;
+}
+
+/* PP-инверсия 390: визуально Flamp -> 2 Gis -> Yell (экспорт 390),
+   DOM десктопный Flamp -> Yell -> 2 Gis (таб-порядок сохранен, см. спеку §9). */
+.reviews__item--gis {
+  order: 2;
+}
+
+.reviews__item--yell {
+  order: 3;
+}
+
+/* Горизонтальные разделители 230px (экспорт 390: y762/1026). */
+.reviews__item + .reviews__item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(230px, 100%);
+  border-top: 1px solid var(--color-line-reviews);
+  transform: translateX(-50%);
+}
+
+.reviews__item + .reviews__item {
+  position: relative; /* якорь ::before-разделителя */
+  padding-top: clamp(28px, 8vw, 40px);
+  margin-top: clamp(28px, 8vw, 40px);
+}
+
+/* Карточка-ссылка: столбец по центру. */
+.ui-review-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 280px; /* хит-зона 280x229 из экспорта */
+  min-height: 229px;
+  min-width: 0;
+  padding: 24px 16px 30px; /* низ 30: звезды (ends 620) -> край (650) */
+  border-radius: var(--radius-none);
+  text-decoration: none;
+  transition: box-shadow var(--transition-base), background-color var(--transition-base);
+}
+
+.ui-review-badge:hover {
+  box-shadow: 10px 10px 10px rgb(0 0 0 / 40%); /* hover-тень из экспорта (там opacity: 0) */
+}
+
+/* Лого-зона фикс. высоты = max лого (Yell 81): имена/звезды в один ряд
+   при разной высоте логотипов (экспорт: имена все на y555). */
+.ui-review-badge__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 81px;
+  min-width: 0;
+}
+
+.ui-review-badge__logo svg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.ui-review-badge__name {
+  min-width: 0;
+  margin-top: 28px; /* зона лого (ends) -> имя (экспорт: ~29-58, норм. 28) */
+  overflow-wrap: break-word;
+  font-size: var(--font-review-name); /* 22.2px/300 */
+  font-weight: var(--font-weight-light);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.ui-review-badge__stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px; /* 5 x ~23.8 + зазоры = 123 из экспорта */
+  margin-top: 16px; /* имя -> звезды (экспорт: ~17) */
+  color: var(--color-text-light);
+}
+
+.ui-review-badge__stars svg {
+  flex: none;
+  width: 22px;
+  height: 20px;
+}
+
+/* --- >=768: 2 ряда (2 + 1), разделители вертикальные ---
+   Геометрия reviews-768.html: шапка x70 (контейнер 40 + 30), карточки 280
+   (x74 / x354 + ряд 2 x77≈74), имена y555, звезды y599 — как на десктопе. */
+@media (min-width: 768px) {
+  .reviews__inner {
+    padding-bottom: 96px; /* низ ≈97 (экспорт: 1024 - 927), минус 1.6px_interp H2 */
+  }
+
+  .reviews__head {
+    padding-left: 30px; /* шапка 40 -> 70 (экспорт 768: H2 x69) */
+  }
+
+  .reviews__title {
+    max-width: 635px; /* переносы 2 строки как в экспорте 768 */
+  }
+
+  .reviews__lead {
+    max-width: 601px; /* ширина лида из экспорта 768/1920 */
+  }
+
+  .reviews__list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch; /* вертикали на всю высоту карточки (~228) */
+    justify-content: flex-start; /* ряд 2 (2 Gis) — под колонкой 1, как в PNG */
+    padding-left: 34px; /* карточки с x74 (контейнер 40 + 34) */
+    margin-top: 81px; /* лид (ends 340) -> карточки (421) */
+  }
+
+  .reviews__item {
+    flex: 0 1 280px; /* колонка 280 (экспорт 768: 74..354, 354..634) */
+    max-width: none;
+  }
+
+  /* Сброс мобайл-инверсии: визуально = DOM (Flamp, Yell + 2 Gis второй ряд). */
+  .reviews__item--gis,
+  .reviews__item--yell {
+    order: 0;
+  }
+
+  /* Сброс горизонтальных разделителей. */
+  .reviews__item + .reviews__item {
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  .reviews__item + .reviews__item::before {
+    content: none;
+  }
+
+  /* Вертикали по reviews-768.png: ряд 1 — левая + средняя + правая,
+     ряд 2 (2 Gis) — только правая. */
+  .reviews__item--flamp {
+    border-left: 1px solid var(--color-line-reviews);
+  }
+
+  .reviews__item--yell {
+    border-left: 1px solid var(--color-line-reviews);
+    border-right: 1px solid var(--color-line-reviews);
+  }
+
+  .reviews__item--gis {
+    border-right: 1px solid var(--color-line-reviews);
+  }
+
+  /* Карточка 229: лого (34/24/34 + 42/81/52) + имя (58/29/48 + 27)
+     + звезды (17 + 21) + низ 30. Суммы: 229/229/229 (экспорт 1920/768). */
+  .ui-review-badge {
+    padding: 0;
+    padding-bottom: 30px; /* звезды (ends 620) -> край (650) */
+  }
+
+  .reviews__item--flamp .ui-review-badge__logo {
+    height: 42px;
+    margin-top: 34px; /* лого y455 */
+  }
+
+  .reviews__item--yell .ui-review-badge__logo {
+    height: 81px;
+    margin-top: 24px; /* лого y445 */
+  }
+
+  .reviews__item--gis .ui-review-badge__logo {
+    height: 52px;
+    margin-top: 34px; /* лого y455 */
+  }
+
+  .reviews__item--flamp .ui-review-badge__name {
+    margin-top: 58px; /* имя y555 */
+  }
+
+  .reviews__item--yell .ui-review-badge__name {
+    margin-top: 29px; /* имя y555 */
+  }
+
+  .reviews__item--gis .ui-review-badge__name {
+    margin-top: 48px; /* имя y555 */
+  }
+
+  .ui-review-badge__stars {
+    margin-top: 17px; /* звезды y599 */
+  }
+
+  /* Второй ряд отступает от первого (экспорт 768: ряд1 ends 650, ряд2 y698).
+     Селектор усилен до (0,2,0): простое .reviews__item--gis проигрывало
+     сбросу .reviews__item + .reviews__item (баг: зазор схлопывался в 0). */
+  .reviews__item.reviews__item--gis {
+    margin-top: 48px;
+  }
+}
+
+/* --- >=1024: десктоп — 1 ряд x 3 (по макету 1920) --- */
+@media (min-width: 1024px) {
+  .reviews__inner {
+    padding-top: 120px; /* eyebrow на 120-135 (экспорт 1920) */
+    padding-bottom: 124px; /* низ 124 (экспорт: 774 - 650) */
+  }
+  /* Шапка десктопа: eyebrow слева, заголовок+лид справа (экспорт: 380 / 535).
+     margin-left -7px — компенсация глобального контейнера 1146 против 1160
+     в макете (380 = 387 - 7; менять общий контейнер ради секции запрещено). */
+  .reviews__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 75px; /* 535 - 380 - 80 */
+    padding-left: 0;
+    margin-left: -7px;
+  }
+
+  .reviews__eyebrow {
+    flex: none;
+    width: 80px;
+    padding-top: 15px; /* eyebrow (135) ниже H2 (120) на 15 */
+  }
+
+  .reviews__heading {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .reviews__title {
+    margin-top: 0;
+    max-width: none;
+  }
+
+  .reviews__lead {
+    margin-top: 12px; /* H2 (ends 276) -> лид (288) */
+    margin-left: 4px; /* PP: текст с x540 (шапка сдвинута на -7, лид дотягиваем) */
+  }
+
+  .reviews__list {
+    flex-wrap: nowrap;
+    width: min(100%, 840px); /* зона карточек 539..1379: 3 x 280 */
+    padding-left: 0;
+    margin-top: 81px; /* лид (ends 340) -> карточки (421) */
+    margin-inline: auto; /* (1920-840)/2 = 540 ≈ 539 */
+  }
+
+  .reviews__item {
+    flex: 1 1 0;
+  }
+
+  /* 4 вертикали на 3 карточки (экспорт: x425/705/985/1265):
+     левая у каждой + правая у последней. */
+  .reviews__item--flamp,
+  .reviews__item--yell,
+  .reviews__item--gis {
+    margin-top: 0;
+    border-left: 1px solid var(--color-line-reviews);
+    border-right: none;
+  }
+
+  .reviews__item--gis {
+    border-right: 1px solid var(--color-line-reviews);
+  }
+
+  /* Сброс межрядного зазора 768: в одну строку он не нужен.
+     Усилено до (0,2,0) — иначе выигрывает правило 768. */
+  .reviews__item.reviews__item--gis {
+    margin-top: 0;
+  }
+}

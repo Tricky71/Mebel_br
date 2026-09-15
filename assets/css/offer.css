@@ -1,0 +1,190 @@
+/* ==========================================================================
+   offer.css — секция 7 .offer («[ Спецпредложение ]», скидка 10%,
+   ui-lead-form №2: имя + телефон + submit).
+   Mobile-First: base 390 -> min-width: 768px -> min-width: 1024px (только
+   раскладка полей формы: стопка -> ряд; требование задачи) -> min-width: 1200px.
+   Замеры: docs/specs/offer.md §2 (offer-1920/390/768.html + offer-390.png;
+   offer-768.png отсутствует, 1920.png — не эталон, см. спеку §10).
+   Карточка full-bleed <1200 (100vw-техника, прецедент trust), бокс 1160 @1200.
+   Высота секции контентная (959 / 1099 / 1099). Форма — shared ui-lead-form
+   (база в communication.css); здесь только позиционные переопределения
+   инстанса (специфичность 0,2,0 перебивает базу 0,1,0).
+   JS (маска/валидация) — forms.js, общий с communication (data-lead-form).
+   ========================================================================== */
+
+.offer {
+  position: relative;
+  z-index: 1; /* карточка поверх about: низ карточки (583+516=1099) уходит
+    за рамку 870 на 229px в зону about (см. §10) */
+  height: 870px; /* рамка кадра — единодушно во всех трех экспортах;
+    карточка 516 (443/583 + 516) переполняет ее вниз и ложится на about */
+  overflow-x: clip; /* кроп full-bleed фото/карточки по горизонтали без скролла */
+  overflow-y: visible; /* низ карточки живьем уходит на about (clip не гасит visible) */
+  background-color: var(--color-bg-dark); /* подложка + полоса ниже фото */
+  color: var(--color-text-light);
+}
+
+/* --- base 390: фото сверху, карточка full-bleed, форма стопкой --- */
+.offer__bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--offer-photo-h);
+}
+
+.offer__bg img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Затемнение светлого фото (offer-bg.png яркое, в рендерах темно):
+   техника hero — темнее сверху, к низу сходит на нет.
+   Альфа — ориентир, точная сверка оверлеем 0.5 при PP (offer.md §10). */
+.offer__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--color-overlay-top),
+    var(--color-overlay) 45%,
+    transparent 80%
+  );
+}
+
+.offer__inner {
+  position: relative;
+  display: flow-root; /* BFC: margin-top карточки (443/583) не схлопывается
+    наружу (overflow сделался clip/visible и BFC больше не держит) */
+}
+
+/* Карточка full-bleed: шире контейнера, вынос через 100vw-технику
+   (прецедент — full-bleed разделители trust.css). */
+.offer__card {
+  width: 100vw;
+  margin-top: var(--offer-card-top); /* открытый верх фото: 443 */
+  margin-left: calc(50% - 50vw);
+  padding-top: 46px; /* карточка -> H2 (экспорт 390: 443 -> 489) */
+  padding-bottom: 62px; /* форма -> низ карточки (897 -> 959) */
+  background-color: var(--color-bg-dark);
+}
+
+.offer__title {
+  min-width: 0;
+  overflow-wrap: break-word;
+  font-size: var(--font-offer-title); /* 27 base -> 52 @768 -> 65 @1200 */
+  font-weight: var(--font-weight-regular);
+  line-height: var(--lh-tight);
+  color: var(--color-text-light);
+  text-align: center;
+  text-transform: uppercase; /* капс через CSS, скобки — часть строки */
+  text-wrap: balance;
+}
+
+.offer__lead {
+  min-width: 0;
+  max-width: 279px; /* 5 строк, как в экспорте 390 */
+  margin-top: 31px; /* H2 (ends ~521) -> лид (552) из экспорта */
+  margin-inline: auto;
+  overflow-wrap: break-word;
+  font-size: var(--font-offer-lead); /* 15 base -> 18 @768 -> 21 @1200 */
+  font-weight: var(--font-weight-light);
+  line-height: 1.6667; /* 25/30/35 — константа во всех ширинах (спека §6) */
+  color: var(--color-text-light);
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.offer__lead:empty {
+  display: none; /* defensive: пустой лид не оставляет дыры */
+}
+
+/* --- Инстанс №2 ui-lead-form: позиционное (база — communication.css) --- */
+.offer .ui-lead-form {
+  width: min(297px, 100%); /* ширина формы из экспорта 390 */
+  margin-top: 30px; /* лид (ends ~677) -> форма (707) из экспорта */
+  margin-inline: auto;
+  min-width: 0;
+}
+
+.offer .ui-lead-form__submit {
+  align-self: flex-start; /* submit 230 уже полей, прижат влево (экспорт) */
+  width: 230px;
+}
+
+/* --- >=768: тексты крупнее, карточка ниже, форма стопкой (как 390!) --- */
+@media (min-width: 768px) {
+  :root {
+    --font-offer-title: 3.25rem; /* H2: 52 */
+    --font-offer-lead: 1.125rem; /* лид: 18 */
+    --offer-card-top: 583px; /* открытый верх фото (экспорт 768/1920) */
+  }
+
+  .offer__card {
+    padding-top: 72px; /* карточка -> H2 (экспорт 768: 583 -> 655) */
+    padding-bottom: 43px; /* форма -> низ карточки (1056 -> 1099) */
+  }
+
+  .offer__lead {
+    max-width: 670px; /* 3 строки, как в экспорте 768 */
+    margin-top: 38px; /* H2 (ends ~717) -> лид (755) из экспорта */
+  }
+
+  .offer .ui-lead-form {
+    width: min(577px, 100%); /* ширина формы из экспорта 768 */
+    margin-top: 21px; /* лид (ends ~845) -> форма (866) из экспорта */
+  }
+}
+
+/* --- >=1024: только раскладка формы — стопка -> ряд (требование задачи).
+   Тексты/карточка остаются на значениях 768. --- */
+@media (min-width: 1024px) {
+  .offer .ui-lead-form {
+    flex-direction: row; /* было column из communication.css */
+    align-items: stretch;
+    gap: 20px; /* зазор полей/кнопки (в экспорте — padding-right: 20) */
+    width: min(890px, 100%);
+  }
+
+  .offer .ui-lead-form__field {
+    flex: 1 1 0;
+    min-width: 0;
+    margin-bottom: 0; /* сброс стекового зазора 20 из communication.css */
+  }
+
+  .offer .ui-lead-form__submit {
+    flex: none;
+    align-self: auto;
+  }
+}
+
+/* --- >=1200: геометрия 1920 (карточка бокс 1160 по центру) --- */
+@media (min-width: 1200px) {
+  :root {
+    --font-offer-title: 4.0625rem; /* H2: 65 */
+    --font-offer-lead: 1.3125rem; /* лид: 21 */
+  }
+
+  /* Бокс 1160 по центру: фикс. ширина + вынос -7 (экспорт: 380..1540
+     при контейнере 387..1533 — прецедент выносов workshop).
+     Центрированный контент внутри от сдвига не страдает (центр тот же). */
+  .offer__card {
+    width: 1160px;
+    max-width: none;
+    margin-left: -7px;
+    margin-right: 0;
+    padding-top: 92px; /* карточка -> H2 (экспорт 1920: 583 -> 675) */
+    padding-bottom: 89px; /* форма -> низ карточки (1010 -> 1099) */
+  }
+
+  .offer__lead {
+    margin-top: 22px; /* H2 (ends ~753) -> лид (775) из экспорта */
+  }
+
+  .offer .ui-lead-form {
+    margin-top: 80px; /* лид (ends ~880) -> форма (960) из экспорта */
+  }
+}
